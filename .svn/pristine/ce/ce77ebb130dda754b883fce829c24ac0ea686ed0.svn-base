@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mbgo.searchmgr.core.mapper.MallPropertyMapper" >
+  <resultMap id="BaseResultMap" type="com.mbgo.searchmgr.core.bean.MallProperty" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="property_name" property="propertyName" jdbcType="VARCHAR" />
+    <result column="property_code" property="propertyCode" jdbcType="VARCHAR" />
+    <result column="is_limit" property="isLimit" jdbcType="INTEGER" />
+    <result column="sort" property="sort" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="cate_id" property="cateId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, property_name,property_code, is_limit, sort, create_time, update_time, cate_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from mall_property
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from mall_property
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+   <select id="selectByCid" resultMap="BaseResultMap" parameterType="com.mbgo.searchmgr.core.bean.MallProperty" >
+    select 
+    <include refid="Base_Column_List" />
+    from mall_property
+   where cate_id = #{cateId,jdbcType=INTEGER} and property_code=#{propertyCode,jdbcType=VARCHAR}
+  </select>
+   <select id="selectByCidCount" resultType="INTEGER" parameterType="com.mbgo.searchmgr.core.bean.MallProperty" >
+    select count(*) from mall_property
+   where cate_id = #{cateId,jdbcType=INTEGER}
+  </select>
+  
+  <update id="updateLimit" parameterType="com.mbgo.searchmgr.core.bean.MallProperty" >
+    update mall_property
+    <set >
+      <if test="isLimit != null" >
+        is_limit = #{isLimit,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+    </set>
+    where cate_id = #{cateId,jdbcType=INTEGER} and property_code=#{propertyCode,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <delete id="deleteAttr" parameterType="com.mbgo.searchmgr.core.bean.MallProperty" >
+    delete from mall_property
+    where cate_id = #{cateId,jdbcType=INTEGER} and property_code=#{propertyCode,jdbcType=VARCHAR}
+  </delete>
+  
+  
+  <select id="getListByParentId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from mall_property
+    where cate_id = #{id,jdbcType=INTEGER} order by sort desc;
+  </select>
+  <select id="getAllAttr" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select distinct property_name,property_code from mall_property
+  </select>
+  <insert id="addAttrInfo" keyProperty="id" useGeneratedKeys="true" parameterType="com.mbgo.searchmgr.core.bean.MallProperty" >
+    insert into mall_property
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="propertyName != null" >
+        property_name,
+      </if>
+      <if test="propertyCode != null" >
+        property_code,
+      </if>
+      <if test="isLimit != null" >
+        is_limit,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="cateId != null" >
+        cate_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="propertyName != null" >
+        #{propertyName,jdbcType=VARCHAR},
+      </if>
+      <if test="propertyCode != null" >
+        #{propertyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isLimit != null" >
+        #{isLimit,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cateId != null" >
+        #{cateId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <insert id="addMallProperty" keyProperty="id" useGeneratedKeys="true" parameterType="com.mbgo.searchmgr.core.bean.MallProperty" >
+    insert into mall_property
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="propertyName != null" >
+        property_name,
+      </if>
+      <if test="propertyCode != null" >
+        property_code,
+      </if>
+      <if test="isLimit != null" >
+        is_limit,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="cateId != null" >
+        cate_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="propertyName != null" >
+        #{propertyName,jdbcType=VARCHAR},
+      </if>
+      <if test="propertyCode != null" >
+        #{propertyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isLimit != null" >
+        #{isLimit,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cateId != null" >
+        #{cateId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+</mapper>

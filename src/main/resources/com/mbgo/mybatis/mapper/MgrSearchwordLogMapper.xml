@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mbgo.searchmgr.core.mapper.MgrSearchwordLogMapper" >
+  <resultMap id="BaseResultMap" type="com.mbgo.searchmgr.core.bean.MgrSearchwordLog" >
+  <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="word" property="word" jdbcType="VARCHAR" />
+    <result column="srcWord" property="srcWord" jdbcType="VARCHAR" />
+    <result column="newWord" property="newWord" jdbcType="VARCHAR" />
+    <result column="word_code" property="wordCode" jdbcType="VARCHAR" />
+    <result column="search_count" property="searchCount" jdbcType="BIGINT" />
+    <result column="rsCount" property="rsCount" jdbcType="BIGINT" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="end_time" property="endTime" jdbcType="BIGINT" />
+    <result column="dayDate" property="dayDate" jdbcType="DATE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, word,srcWord,newWord,word_code, search_count,rsCount, add_time,end_time, dayDate
+  </sql>
+  
+  
+   <select id="selectAndPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	select * from mgr_searchword_log  sl where 1=1
+  	<if test="word != null and word != '' ">
+  		and sl.word LIKE CONCAT(CONCAT('%', #{word}), '%')
+  	</if>
+  	<if test="beginTime != null and beginTime != ''">
+  	<![CDATA[
+   		and sl.add_time >= #{beginTime} 
+   		]]>
+  	</if>
+    <if test="endTime != null and endTime != ''" >
+  	<![CDATA[
+  	and sl.add_time <= #{endTime} 
+    	]]>  
+  	</if>
+  	order by add_time desc
+  	LIMIT  #{currentPage}, #{pageSize} 
+  </select>
+  
+<!--     <select id="getTotal" parameterType="com.mbgo.searchmgr.core.bean.MgrDicKeyword" resultMap="int"> -->
+<!--   	select count(*) from mgr_dic_keyword  dk where 1=1 -->
+<!--   	<if test="word != null and word != '' "> -->
+<!--   		and dk.word LIKE CONCAT(CONCAT('%', #{word}), '%') -->
+<!--   	</if> -->
+<!--   </select> -->
+  
+   <select id="selectPageTotal" parameterType="java.util.Map" resultType="int">
+  			select  count(*)  from mgr_searchword_log  sl where 1=1
+  <if test="word != null and word != '' ">
+  		and sl.word LIKE CONCAT(CONCAT('%', #{word}), '%')
+  	</if>
+  	<if test="beginTime != null and beginTime != ''">
+  	<![CDATA[
+   		and sl.add_time >= #{beginTime} 
+   		]]>
+  	</if>
+    <if test="endTime != null and endTime != ''" >
+  	<![CDATA[
+  	and sl.add_time <= #{endTime} 
+    	]]>  
+  	</if>
+  </select>
+  
+   <select id="exportWord" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	select * from mgr_searchword_log  sl where 1=1
+  	<if test="word != null and word != '' ">
+  		and sl.word LIKE CONCAT(CONCAT('%', #{word}), '%')
+  	</if>
+  	<if test="beginTime != null and beginTime != ''">
+  	<![CDATA[
+   		and sl.add_time >= #{beginTime} 
+   		]]>
+  	</if>
+    <if test="endTime != null and endTime != ''" >
+  	<![CDATA[
+  	and sl.add_time <= #{endTime} 
+    	]]>  
+  	</if>
+  </select>
+</mapper>

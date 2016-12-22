@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mbgo.searchmgr.core.mapper.MgrSameKeywordMapper" >
+  <resultMap id="BaseResultMap" type="com.mbgo.searchmgr.core.bean.MgrSameKeyword" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="words" property="words" jdbcType="VARCHAR" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="last_update" property="lastUpdate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, words, add_time, last_update
+  </sql>
+  <select id="query" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from mgr_same_keyword
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from mgr_same_keyword
+  </select>
+  <delete id="selectByOther" parameterType="java.lang.Long" >
+    delete from mgr_same_keyword
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+     <delete id="deleteBatchByList" parameterType="list">
+delete from mgr_same_keyword where id in
+  
+  <foreach collection="list" index="index" item="idItem" open="(" separator="," close=")">
+  #{idItem}
+  </foreach>
+  </delete>
+  
+  <insert id="insertSelective" keyProperty="id" useGeneratedKeys="true" parameterType="com.mbgo.searchmgr.core.bean.MgrSameKeyword" >
+    insert into mgr_same_keyword
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="words != null" >
+        words,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="lastUpdate != null" >
+        last_update,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="words != null" >
+        #{words,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdate != null" >
+        #{lastUpdate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mbgo.searchmgr.core.bean.MgrSameKeyword" >
+    update mgr_same_keyword
+    <set >
+      <if test="words != null" >
+        words = #{words,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdate != null" >
+        last_update = #{lastUpdate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mbgo.searchmgr.core.bean.MgrSameKeyword" >
+    update mgr_same_keyword
+    set words = #{words,jdbcType=VARCHAR},
+      add_time = #{addTime,jdbcType=BIGINT},
+      last_update = #{lastUpdate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+   <select id="selectAndPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	select * from mgr_same_keyword  sk where 1=1
+  	<if test="words != null and words != '' ">
+  		and sk.words LIKE CONCAT(CONCAT('%', #{words}), '%')
+  	</if>
+   <if test="beginTime != null and beginTime != ''">
+  	<![CDATA[
+   		and sk.add_time >= #{beginTime} 
+   		]]>
+  	</if>
+    <if test="endTime != null and endTime != ''" >
+  	<![CDATA[
+  	and sk.add_time <= #{endTime} 
+    	]]>  
+  	</if>
+  	order by add_time ${order} 
+  	LIMIT  #{currentPage}, #{pageSize} 
+  </select>
+  
+<!--     <select id="getTotal" parameterType="com.mbgo.searchmgr.core.bean.MgrDicKeyword" resultMap="int"> -->
+<!--   	select count(*) from mgr_dic_keyword  dk where 1=1 -->
+<!--   	<if test="word != null and word != '' "> -->
+<!--   		and dk.word LIKE CONCAT(CONCAT('%', #{word}), '%') -->
+<!--   	</if> -->
+<!--   </select> -->
+  
+   <select id="selectPageTotal" parameterType="java.util.Map" resultType="int">
+  		select count(*) from mgr_same_keyword  sk where 1=1
+  	<if test="words != null and words != '' ">
+  		and sk.words LIKE CONCAT(CONCAT('%', #{words}), '%')
+  	</if>
+  	<if test="beginTime != null and beginTime != ''">
+  	<![CDATA[
+   		and sk.add_time >= #{beginTime} 
+   		]]>
+  	</if>
+    <if test="endTime != null and endTime != ''" >
+  	<![CDATA[
+  	and sk.add_time <= #{endTime} 
+    	]]>  
+  	</if>
+  </select>
+  
+</mapper>

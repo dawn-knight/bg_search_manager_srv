@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mbgo.searchmgr.core.shopmapper.ProductLibAttrKeyMapper" >
+  <resultMap id="BaseResultMap" type="com.mbgo.searchmgr.core.bean.mbshop.ProductLibAttrKey" >
+    <id column="attr_key_id" property="attrKeyId" jdbcType="INTEGER" />
+    <result column="attr_key_name" property="attrKeyName" jdbcType="VARCHAR" />
+     <result column="attr_key_alias" property="attrKeyAlias" jdbcType="VARCHAR" />
+    <result column="attr_key_code" property="attrKeyCode" jdbcType="VARCHAR" />
+     <result column="attr_group" property="attrGroup" jdbcType="INTEGER" />
+    <result column="form_type" property="formType" jdbcType="INTEGER" />
+    <result column="is_required" property="isRequired" jdbcType="INTEGER" />
+     <result column="is_special_attr" property="isSpecialAttr" jdbcType="INTEGER" />
+      <result column="key_dec" property="keyDec" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+      <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+     <result column="last_update_user" property="lastUpdateUser" jdbcType="VARCHAR" />
+    <result column="last_update_date" property="lastUpdateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    attr_key_id, attr_key_name, attr_key_code, input_type, is_required, sort, status, 
+    create_time, update_time
+  </sql>
+  
+<!--    <select id="getAll" resultMap="BaseResultMap"> -->
+<!--     select * from product_lib_attr_key -->
+<!--   </select> -->
+   <select id="getAll" resultMap="BaseResultMap">
+    select * from product_lib_attr_key
+  </select>
+</mapper>

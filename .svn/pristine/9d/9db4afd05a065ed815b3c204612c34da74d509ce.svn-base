@@ -1,0 +1,5 @@
+searchDB.name=searchDB
+#searchDB.addresses=search.mongo.db.wx:55555
+searchDB.addresses=10.100.200.55:55555
+searchDB.user=search
+searchDB.password=bgsearch*()

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mbgo.searchmgr.core.mapper.MgrUserRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.mbgo.searchmgr.core.bean.MgrUserRole" >
+  
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userid" jdbcType="BIGINT" />
+    <result column="role_id" property="roleid" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, role_id
+  </sql>
+   
+   <select id="queryRoleByUid" parameterType="Long" resultMap="BaseResultMap">
+  	select * from mgr_user_role r where user_id =${_parameter}
+  </select>
+  <select id="queryByRid" parameterType="Long" resultMap="BaseResultMap">
+  	select * from mgr_user_role  r where role_id =${_parameter}
+  </select>
+   
+      <delete id="deleteBatchByList" parameterType="list">
+     delete from mgr_user_role where user_id in
+    <foreach collection="list" index="index" item="idItem" open="(" separator="," close=")">
+    #{idItem}
+  </foreach>
+  </delete>
+  
+   <update id="updateByUserId"  parameterType="com.mbgo.searchmgr.core.bean.MgrUserRole" >
+                update mgr_user_role 
+                <set>
+                  role_id=${roleid}
+                </set>
+                where user_id = ${userid}
+    </update>
+    
+<insert id="insertSelective" keyProperty="id" useGeneratedKeys="true" parameterType="com.mbgo.searchmgr.core.bean.MgrUserRole" >
+    insert into mgr_user_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        user_id,
+      </if>
+      <if test="roleid != null" >
+        role_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+         #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="roleid != null" >
+         #{roleid,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>   
+  
+  
+<insert id="addBatch"  useGeneratedKeys="true" parameterType="list">  
+    insert into mgr_user_role (user_id,role_id)   
+    values  
+    <foreach collection="list" item="item" index="index" separator="," >  
+        (#{item.userid},#{item.roleid})  
+    </foreach>  
+</insert>  
+
+  
+  
+</mapper>

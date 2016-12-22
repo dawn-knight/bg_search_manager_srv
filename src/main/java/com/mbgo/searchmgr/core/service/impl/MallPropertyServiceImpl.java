@@ -1,0 +1,48 @@
+package com.mbgo.searchmgr.core.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.mbgo.searchmgr.core.bean.MallProperty;
+import com.mbgo.searchmgr.core.mapper.MallPropertyMapper;
+import com.mbgo.searchmgr.core.service.MallPropertyService;
+
+@Service("mallPropertyService")
+public class MallPropertyServiceImpl implements MallPropertyService{
+
+	@Autowired
+	private MallPropertyMapper mallPropertyMapper;
+	
+	public List<MallProperty> getListByParentId(int id){
+     return mallPropertyMapper.getListByParentId(id);
+	}
+	public List<MallProperty> selectByCid(MallProperty pro){
+		return mallPropertyMapper.selectByCid(pro);
+	}
+	public List<MallProperty> getAllAttr(){
+	return mallPropertyMapper.getAllAttr();
+	}
+	public int addAttrInfo(MallProperty property){
+		return mallPropertyMapper.addAttrInfo(property);
+	}
+	public int addMallProperty(MallProperty property){
+		return mallPropertyMapper.addMallProperty(property);
+	}
+	public int updateLimit(MallProperty property){
+		return mallPropertyMapper.updateLimit(property);
+	}
+	public int deleteAttr(MallProperty property){
+		return mallPropertyMapper.deleteAttr(property);
+	}
+	public int selectByCidCount(MallProperty property){
+		return mallPropertyMapper.selectByCidCount(property);
+	}
+	public MallProperty selectBykey(int id){
+		return mallPropertyMapper.selectByPrimaryKey(id);
+	}
+	public int deleteAll(){
+		return mallPropertyMapper.deleteAll();
+	}
+}

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mbgo.searchmgr.core.mapper.MgrLogMapper" >
+  <resultMap id="BaseResultMap" type="com.mbgo.searchmgr.core.bean.MgrLog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="userrole" property="userrole" jdbcType="VARCHAR" />
+    <result column="log_content" property="logContent" jdbcType="VARCHAR" />
+    <result column="addTime" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, username, userrole, log_content, addTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from mgr_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <insert id="insert" parameterType="com.mbgo.searchmgr.core.bean.MgrLog" >
+    insert into mgr_log (id, username, userrole, 
+      log_content, addTime)
+    values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{userrole,jdbcType=VARCHAR}, 
+      #{logContent,jdbcType=VARCHAR}, #{addtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" keyProperty="id" parameterType="com.mbgo.searchmgr.core.bean.MgrLog" >
+    insert into mgr_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="userrole != null" >
+        userrole,
+      </if>
+      <if test="logContent != null" >
+        log_content,
+      </if>
+      <if test="addtime != null" >
+        addTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="userrole != null" >
+        #{userrole,jdbcType=VARCHAR},
+      </if>
+      <if test="logContent != null" >
+        #{logContent,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="selectAndPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	select * from mgr_log  m where 1=1
+  	<if test="username != null and username != '' ">
+  		and m.username LIKE CONCAT(CONCAT('%', #{username}), '%')
+  	</if>
+  	<if test="userrole != null and userrole != '' ">
+  		and m.userrole LIKE CONCAT(CONCAT('%', #{userrole}), '%')
+  	</if>
+  	<if test="beginTime != null and beginTime != ''">
+  	<![CDATA[
+   		and m.addTime >= #{beginTime} 
+   		]]>
+  	</if>
+    <if test="endTime != null and endTime != ''" >
+  	<![CDATA[
+  	and m.addTime <= #{endTime} 
+    	]]>  
+  	</if>
+  	order by addTime desc 
+  	LIMIT  #{currentPage}, #{pageSize} 
+  </select>
+  
+<!--     <select id="getTotal" parameterType="com.mbgo.searchmgr.core.bean.MgrDicKeyword" resultMap="int"> -->
+<!--   	select count(*) from mgr_dic_keyword  dk where 1=1 -->
+<!--   	<if test="word != null and word != '' "> -->
+<!--   		and dk.word LIKE CONCAT(CONCAT('%', #{word}), '%') -->
+<!--   	</if> -->
+<!--   </select> -->
+  
+   <select id="selectPageTotal" parameterType="java.util.Map" resultType="int">
+  	select count(*) from mgr_log  m where 1=1
+  <if test="username != null and username != '' ">
+  		and m.username LIKE CONCAT(CONCAT('%', #{username}), '%')
+  	</if>
+  	<if test="userrole != null and userrole != '' ">
+  		and m.userrole LIKE CONCAT(CONCAT('%', #{userrole}), '%')
+  	</if>
+  	<if test="beginTime != null and beginTime != ''">
+  	<![CDATA[
+   		and m.addTime >= #{beginTime} 
+   		]]>
+  	</if>
+    <if test="endTime != null and endTime != ''" >
+  	<![CDATA[
+  	and m.addTime <= #{endTime} 
+    	]]>  
+  	</if>
+  </select>
+</mapper>

@@ -1,0 +1,240 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ include file="/common/css.jsp"%>
+<%@ include file="/common/js.jsp"%>
+<%@ include file="/common/common.jsp"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>关键词搜索管理</title>
+<script type="text/javascript">
+$(function(){
+	$('#searchCount').numberbox({
+		min:0, 
+		max:999999,
+		required:true , 
+		precision:0
+	});
+	$('#rscount').numberbox({
+		min:0, 
+		max:999999,
+		required:true , 
+		precision:0
+	});
+		
+$('#list').datagrid({
+idField:'id' ,		//只要创建数据表格 就必须要加 ifField
+title:'总词库列表' ,
+fit:true ,
+url:'queryWord' ,
+fitColumns:true ,  
+striped: true ,					//隔行变色特性 
+//nowrap: false ,				//折行显示 为true 显示在一会 
+loadMsg: '数据正在加载,请耐心的等待...' ,
+rownumbers:true ,
+checkOnSelect:false,
+frozenColumns : [ [ //冻结列特性 ,不要与fitColumns 特性一起使用 
+				{
+					field : 'ck',
+					width : 50,
+					checkbox : true
+				} ] ],
+				columns : [ [
+						{
+							field : 'keyword',
+							title : '关键字',
+							width : 100,
+							align : 'center',
+						},
+						{
+							field : 'searchCount',
+							title : '被搜索次数',
+							width : 100,
+							align : 'center',
+						},
+                        {
+							field : 'addTime',
+							title : '添加时间',
+							width : 100,
+							align : 'center',
+							formatter : function(value, rec, index) {
+								if (value == undefined) {
+									return "";
+								}
+								var tempDate = new Date(value);
+								return tempDate
+										.format("yyyy-MM-dd hh:mm:ss");
+
+							}
+						}, {
+							field : 'lastUpdate',
+							title : '更新时间',
+							width : 100,
+							align : 'center',
+						},
+
+				] ],
+				onClickRow: function (rowIndex, rowData) {
+                     $(this).datagrid('unselectRow', rowIndex);
+                 }, 
+				pagination : true,
+				pageSize : 10,
+				pageList : [ 5, 10, 15, 20, 50 ],
+				toolbar : [ {
+					id:'authAdd', 
+					text : '新增词库关键字',
+					iconCls : 'icon-add',
+					handler : function() {
+						flag = 'add';
+						$('#add').dialog({
+							title : '新增词库关键字'
+						});
+//							$('#addform').get(0).reset();
+						$('#addform').form('clear');
+						 $("#searchCount").numberbox('setValue',0);
+						 $("#rscount").numberbox('setValue',0);
+						$('#add').dialog('open');
+
+					}
+				}
+					]
+			});
+
+$('#list').datagrid('getPager').pagination({  
+beforePageText: '第',//页数文本框前显示的汉字  
+afterPageText: '页    共 {pages} 页',  
+displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录',  
+}); 
+/**
+* 关闭窗口方法
+*/
+$('#close').click(function() {
+$('#add').dialog('close');
+});
+
+
+$('#searchbtn').click(function(){
+//	var word = $('#word').val();
+//	var addTime = $('#addTime').val();
+//	var endTime = $('#endTime').val();
+//	var para = "word="+word+"&addTime="+addTime+"&endTime"+endTime;
+$('#list').datagrid('load' ,serializeForm($('#search')));
+});
+
+$('#clearbtn').click(function(){
+$('#search').form('clear');
+$('#list').datagrid('load' ,{});
+});
+});
+
+
+//js方法：序列化表单 			
+function serializeForm(form){
+	var obj = {};
+	$.each(form.serializeArray(),function(index){
+		if(obj[this['name']]){
+			obj[this['name']] = obj[this['name']] + ','+this['value'];
+		} else {
+			obj[this['name']] =this['value'];
+		}
+	});
+	return obj;
+}	
+			
+</script>
+</head>
+
+<body>
+<body>
+	<div id="lay" class="easyui-layout" fit="true">
+				<div region="north" title="总词库查询" collapsible=false style="height:23%; padding-top :10px; padding-left: 5px;" >
+					<form id="search" method="post">
+					<table style="padding: 5px;">
+					<tr>
+					<td>&nbsp;&nbsp;关键字: &nbsp;</td>
+					<td>
+					<input type="hidden" id="auth" name="auth" value='<sec:authentication property="principal.authorities" />'>
+					<input type="hidden" id="listadd" name="listadd" value='${listadd}'>
+					<input type="hidden" id="listdelete" name="listdelete" value='${listdelete}'>
+					<input type="hidden" id="listupdate" name="listupdate" value='${listupdate}'>
+					
+					<input class="easyui-textbox" id="keyword1" name="keyword1" style="width:180px;height:25px">&nbsp;&nbsp;
+					</td>
+					<td>&nbsp;添加时间:&nbsp;</td>
+					<td><input id="beginTime" name="beginTime"  class="easyui-datetimebox" editable="false" style="width:180px;height: 25px;"   value="" />&nbsp;&nbsp;</td>
+					<td>&nbsp;&nbsp;到:&nbsp;&nbsp;</td>
+					<td><input id="endTime"  name="endTime"  class="easyui-datetimebox" editable="false" style="width:180px;height: 25px;"  value="" />
+					</td>
+					<td></td>
+					<td><a  id="searchbtn" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width:80px;height: 25px;">查询</a></td>
+					
+				   <td>
+					<a  id="clearbtn" class="easyui-linkbutton" data-options="iconCls:'icon-cut'" style="width:80px;height: 25px;">清空</a>
+				   
+				   </td>
+					
+					</tr>
+					</table>
+
+					</form>
+				
+				</div>
+				<div region="center">
+					<table id="list"></table>
+				</div>
+		
+			</div>
+ 			<div id="add" title="新增商品标签" modal=true  draggable=false class="easyui-dialog" closed=true style="width:400px;height: 300px; padding-top: 10px; padding-left: 6px;">
+	    		<form id="addform" action="" method="post">
+	    				<input type="hidden" id="id" name="id" value="" />
+	    				<table>
+	    					<tr>
+	    						<td>&nbsp;&nbsp;关键字:&nbsp;&nbsp;</td>
+	    						<td>
+	    						<input class="easyui-textbox" id="keyword" name="keyword" required=true  missingMessage="关键字必填!"  style="width:180px;height:25px">&nbsp;&nbsp;
+	    					</tr>
+	    					<tr><td></td><td></td></tr>
+	    					<tr><td></td><td></td></tr>
+	    					<tr>
+	    						<td>&nbsp;&nbsp;搜索次数:&nbsp;&nbsp;</td>
+	    						<td>
+	    							<input class="easyui-textbox" id="searchCount" name="searchCount" required=true  missingMessage="搜索次数必填!" style="width:180px;height:25px" value="0"></td>
+	    					</tr> 
+	    					<tr><td></td><td></td></tr>
+	    					<tr><td></td><td></td></tr> 
+	    					<tr>
+	    						<td>&nbsp;&nbsp;搜索结果数:&nbsp;&nbsp;</td>
+	    						<td>
+	    							<input class="easyui-textbox" id="rscount" name="rscount" required=true  missingMessage="搜索结果数必填!" style="width:180px;height:25px" value="0"></td>
+	    					</tr>  
+							<tr><td></td><td></td></tr>
+							<tr><td></td><td></td></tr>
+	    					<tr align="center">
+	    						<td colspan="2" align="center">
+	    						 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	    						 <a  id="confirm" class="easyui-linkbutton" data-options="iconCls:'icon-add'" style="width:80px;height: 25px;">确定</a>
+	    						 <a  id="close" class="easyui-linkbutton"  data-options="iconCls:'icon-cut'" style="width:80px;height: 25px;">关闭</a>
+	    						</td>
+	    					</tr>  
+	    				</table>
+	    		</form> 
+	    	<div style="color:#444444; font-size:13px;">
+  		<pre>
+  规则：
+  	增加：关键字必须输，美邦、邦美属于同一个不允许重复。
+  	    搜索次数、搜索结果数默认为0。
+	修改：不允许修改为已经存在的关键字，或者Unicode 
+	code相同，搜索次数、搜索结果数必须为数字
+  		
+  		</pre>
+  	</div>		
+ 			</div>
+  </body>
+</html>
+
+
+

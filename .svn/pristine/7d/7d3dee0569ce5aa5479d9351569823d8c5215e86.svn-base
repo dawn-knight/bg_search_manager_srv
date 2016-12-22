@@ -1,0 +1,48 @@
+package com.mbgo.searchmgr.core.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.mbgo.searchmgr.core.bean.MgrBaseKeyword;
+import com.mbgo.searchmgr.core.bean.MgrSearchwordLog;
+import com.mbgo.searchmgr.core.mapper.MgrSearchwordLogMapper;
+import com.mbgo.searchmgr.core.service.SearchWordService;
+
+@Service("searchWordService")
+public class SearchWordServiceImpl implements SearchWordService{
+
+	@Autowired
+	private MgrSearchwordLogMapper searchwordLogMapper;
+	
+	@Override
+	public int addBaseKeyword(MgrSearchwordLog searchwordLog) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<MgrSearchwordLog> selectAndPage(Map<String, Object> map) {
+		return searchwordLogMapper.selectAndPage(map);
+	}
+
+	@Override
+	public int selectPageTotal(Map<String, Object> map) {
+		return searchwordLogMapper.selectPageTotal(map);
+	}
+
+	@Override
+	public List<MgrBaseKeyword> selectByCode(String code) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MgrBaseKeyword selectDataByWordcode(String code) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

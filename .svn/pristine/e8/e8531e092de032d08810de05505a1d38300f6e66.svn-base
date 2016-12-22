@@ -1,0 +1,11 @@
+#searchurl=http://mbsearch2.search.api.wx:8080/MBgoSearchSrv/search/qg.do
+#addProducturl=http://mbsearch2.search.api.wx:8080/MBgoSearchSrv/search/upsertProductById.do
+#reloadurl=http://mbsearch2.search.api.wx:8080/MBgoSearchSrv/search/reloadCache.do
+
+searchurl=http://bgsc.search.api.wx:8080/MBgoSearchSrv/search/qg.do
+addProducturl=http://bgsc.search.api.wx:8080/MBgoSearchSrv/search/upsertProductById.do
+reloadurl=http://bgsc.search.api.wx:8080/MBgoSearchSrv/search/reloadCache.do
+
+
+
+

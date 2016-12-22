@@ -1,0 +1,3 @@
+searchurl=http://10.100.20.247/MBgoSearchSrv/search/qg.do
+addProducturl=http://10.100.20.247/MBgoSearchSrv/search/upsertProductById.do
+reloadurl=http://10.100.20.247/MBgoSearchSrv/search/reloadCache.do

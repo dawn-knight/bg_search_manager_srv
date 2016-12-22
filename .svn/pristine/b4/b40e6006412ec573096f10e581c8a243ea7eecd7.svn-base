@@ -1,0 +1,28 @@
+package com.mbgo.searchmgr.core.mapper;
+
+import java.util.List;
+
+import com.mbgo.searchmgr.core.bean.MallProperty;
+
+public interface MallPropertyMapper {
+    int deleteByPrimaryKey(Integer id);
+
+    int insert(MallProperty record);
+
+    int insertSelective(MallProperty record);
+
+    MallProperty selectByPrimaryKey(Integer id);
+
+    int updateByPrimaryKeySelective(MallProperty record);
+
+    int updateByPrimaryKey(MallProperty record);
+    List<MallProperty> getListByParentId(int id);
+    List<MallProperty> getAllAttr();
+    public int addAttrInfo(MallProperty property);
+    public int updateLimit(MallProperty property);
+    public int deleteAttr(MallProperty property);
+    public List<MallProperty> selectByCid(MallProperty pro);
+    public int selectByCidCount(MallProperty property);
+    public int addMallProperty(MallProperty property);
+    public int deleteAll();
+}

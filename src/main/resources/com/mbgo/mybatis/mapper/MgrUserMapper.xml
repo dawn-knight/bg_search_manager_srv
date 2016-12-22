@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mbgo.searchmgr.core.mapper.MgrUserMapper" >
+   <resultMap id="BaseResultMap" type="com.mbgo.searchmgr.core.bean.MgrUser">
+
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+     <result column="sex" property="sex" jdbcType="INTEGER" />
+     <result column="add_time" jdbcType="BIGINT" property="addTime" />
+    <result column="last_update" jdbcType="TIMESTAMP" property="lastUpdate" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, username, password,sex,add_time,last_update
+  </sql>
+  
+   <select id="login" resultMap="BaseResultMap" parameterType="com.mbgo.searchmgr.core.bean.MgrUser" >
+    select 
+    <include refid="Base_Column_List" />
+    from mgr_user
+    where username = #{username,jdbcType=VARCHAR}
+  </select>
+   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.mbgo.searchmgr.core.bean.MgrUser" >
+    select 
+    <include refid="Base_Column_List" />
+    from mgr_user
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+   <select id="queryUserAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from mgr_user
+  </select>
+  
+  
+   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from mgr_user
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+   <select id="queryUser" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select * from mgr_user  u where 1=1
+  	<if test="_parameter != null and _parameter != '' ">
+  		and u.username  = #{_parameter,jdbcType=VARCHAR}
+  	</if>
+  </select>
+   <select id="queryUserByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select * from mgr_user  u where 1=1
+  	<if test="_parameter != null and _parameter != '' ">
+  		and u.username  = #{_parameter,jdbcType=VARCHAR}
+  	</if>
+  </select>
+  
+  
+   <select id="selectAndPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	select * from mgr_user  u where 1=1
+  	<if test="username != null and username != '' ">
+  		and u.username LIKE CONCAT(CONCAT('%', #{username}), '%')
+  	</if>
+  	<if test="beginTime != null and beginTime != ''">
+  	<![CDATA[
+   		and u.add_time >= #{beginTime} 
+   		]]>
+  	</if>
+    <if test="endTime != null and endTime != ''" >
+  	<![CDATA[
+  	and u.add_time <= #{endTime} 
+    	]]>  
+  	</if>
+  	order by add_time desc
+  	LIMIT  #{currentPage}, #{pageSize} 
+  </select>
+  
+  
+   <select id="selectPageTotal" parameterType="java.util.Map" resultType="int">
+  	select count(*) from mgr_user  u where 1=1
+  	<if test="username != null and username != '' ">
+  		and u.username LIKE CONCAT(CONCAT('%', #{username}), '%')
+  	</if>
+  	<if test="beginTime != null and beginTime != ''">
+  	<![CDATA[
+   		and u.add_time >= #{beginTime} 
+   		]]>
+  	</if>
+    <if test="endTime != null and endTime != ''" >
+  	<![CDATA[
+  	and u.add_time <= #{endTime} 
+    	]]>  
+  	</if>
+  </select>
+  
+  <insert id="insertSelective" keyProperty="id" useGeneratedKeys="true" parameterType="com.mbgo.searchmgr.core.bean.MgrUser" >
+    insert into mgr_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="lastUpdate != null" >
+        last_update,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="username != null" >
+         #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+         #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+         #{sex,jdbcType=INTEGER},
+      </if>
+       <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdate != null" >
+        #{lastUpdate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+   <update id="updateByPrimaryKeySelective" parameterType="com.mbgo.searchmgr.core.bean.MgrUser" >
+    update mgr_user
+    <set >
+      <if test="username != null and username!='' " >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null and password!=''  ">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null and addTime != '' ">
+        add_time = #{addTime,jdbcType=INTEGER},
+      </if>
+      <if test="lastUpdate != null and lastUpdate != '' ">
+        last_update = #{lastUpdate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+    <delete id="deleteBatchByList" parameterType="list">
+  delete from mgr_user where id in
+  
+  <foreach collection="list" index="index" item="idItem" open="(" separator="," close=")">
+  #{idItem}
+  </foreach>
+  </delete>
+  
+ 
+  
+  
+</mapper>

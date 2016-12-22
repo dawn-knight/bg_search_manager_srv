@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mbgo.searchmgr.core.mapper.MgrBaseKeywordMapper" >
+  <resultMap id="BaseResultMap" type="com.mbgo.searchmgr.core.bean.MgrBaseKeyword" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="keyWord" property="keyword" jdbcType="LONGVARCHAR" />
+    <result column="word_code" property="wordCode" jdbcType="LONGVARCHAR" />
+    <result column="search_count" property="searchCount" jdbcType="BIGINT" />
+    <result column="rsCount" property="rscount" jdbcType="BIGINT" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="last_update" property="lastUpdate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, keyWord, word_code, search_count, rsCount, add_time, last_update
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from mgr_base_keyword
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from mgr_base_keyword
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.mbgo.searchmgr.core.bean.MgrBaseKeyword" >
+    insert into mgr_base_keyword (id, keyWord, word_code, 
+      search_count, rsCount, add_time, 
+      last_update)
+    values (#{id,jdbcType=BIGINT}, #{keyword,jdbcType=LONGVARCHAR}, #{wordCode,jdbcType=LONGVARCHAR}, 
+      #{searchCount,jdbcType=BIGINT}, #{rscount,jdbcType=BIGINT}, #{addTime,jdbcType=BIGINT}, 
+      #{lastUpdate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mbgo.searchmgr.core.bean.MgrBaseKeyword" >
+    insert into mgr_base_keyword
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="keyword != null" >
+        keyWord,
+      </if>
+      <if test="wordCode != null" >
+        word_code,
+      </if>
+      <if test="searchCount != null" >
+        search_count,
+      </if>
+      <if test="rscount != null" >
+        rsCount,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="lastUpdate != null" >
+        last_update,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="keyword != null" >
+        #{keyword,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="wordCode != null" >
+        #{wordCode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="searchCount != null" >
+        #{searchCount,jdbcType=BIGINT},
+      </if>
+      <if test="rscount != null" >
+        #{rscount,jdbcType=BIGINT},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdate != null" >
+        #{lastUpdate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mbgo.searchmgr.core.bean.MgrBaseKeyword" >
+    update mgr_base_keyword
+    <set >
+      <if test="keyword != null" >
+        keyWord = #{keyword,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="wordCode != null" >
+        word_code = #{wordCode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="searchCount != null" >
+        search_count = #{searchCount,jdbcType=BIGINT},
+      </if>
+      <if test="rscount != null" >
+        rsCount = #{rscount,jdbcType=BIGINT},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="lastUpdate != null" >
+        last_update = #{lastUpdate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mbgo.searchmgr.core.bean.MgrBaseKeyword" >
+    update mgr_base_keyword
+    set keyWord = #{keyword,jdbcType=LONGVARCHAR},
+      word_code = #{wordCode,jdbcType=LONGVARCHAR},
+      search_count = #{searchCount,jdbcType=BIGINT},
+      rsCount = #{rscount,jdbcType=BIGINT},
+      add_time = #{addTime,jdbcType=BIGINT},
+      last_update = #{lastUpdate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  
+  <select id="selectAndPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	select * from mgr_base_keyword  dk where 1=1
+  	<if test="keyWord != null and keyWord != '' ">
+  		and dk.keyWord LIKE CONCAT(CONCAT('%', #{keyWord}), '%')
+  	</if>
+    	<if test="beginTime != null and beginTime != ''">
+  		<![CDATA[
+  		and dk.add_time >= #{beginTime} 
+   		]]> 
+   	  </if>
+  	 <if test="endTime != null and endTime != ''" >
+  	<![CDATA[
+  	and dk.add_time <= #{endTime} 
+    	]]>  
+  	</if>
+  	order by add_time desc 
+  	LIMIT  #{currentPage}, #{pageSize} 
+  </select>
+  
+  <select id="exportSelect" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	select * from mgr_base_keyword  dk where 1=1
+  	<if test="keyWord != null and keyWord != '' ">
+  		and dk.keyWord LIKE CONCAT(CONCAT('%', #{keyWord}), '%')
+  	</if>
+    	<if test="beginTime != null and beginTime != ''">
+  		<![CDATA[
+  		and dk.add_time >= #{beginTime} 
+   		]]> 
+   	  </if>
+  	 <if test="endTime != null and endTime != ''" >
+  	<![CDATA[
+  	and dk.add_time <= #{endTime} 
+    	]]>  
+  	</if>
+  </select>
+<!--     <select id="getTotal" parameterType="com.mbgo.searchmgr.core.bean.MgrDicKeyword" resultMap="int"> -->
+<!--   	select count(*) from mgr_dic_keyword  dk where 1=1 -->
+<!--   	<if test="word != null and word != '' "> -->
+<!--   		and dk.word LIKE CONCAT(CONCAT('%', #{word}), '%') -->
+<!--   	</if> -->
+<!--   </select> -->
+  
+   <select id="selectPageTotal" parameterType="java.util.Map" resultType="int">
+  	select count(*) from mgr_base_keyword  dk where 1=1
+  <if test="keyWord != null and keyWord != '' ">
+  		and dk.keyWord LIKE CONCAT(CONCAT('%', #{keyWord}), '%')
+  	</if>
+  	<if test="beginTime != null and beginTime != ''">
+  	<![CDATA[
+   		and dk.add_time >= #{beginTime} 
+   		]]>
+  	</if>
+    <if test="endTime != null and endTime != ''" >
+  	<![CDATA[
+  	and dk.add_time <= #{endTime} 
+    	]]>  
+  	</if>
+  </select>
+   <delete id="deleteBatchByList" parameterType="list">
+    delete from mgr_base_keyword where id in
+  
+  <foreach collection="list" index="index" item="idItem" open="(" separator="," close=")">
+  #{idItem}
+  </foreach>
+  </delete>
+  
+  
+   <select id="selectByCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from mgr_base_keyword
+    where word_code = #{wordCode,jdbcType=VARCHAR}
+  </select>
+   <select id="selectDataByWordcode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from mgr_base_keyword
+    where word_code = #{wordCode,jdbcType=VARCHAR}
+  </select>
+</mapper>

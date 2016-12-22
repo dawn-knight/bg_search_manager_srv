@@ -1,0 +1,10 @@
+* { margin:0 auto; padding:0; border:0;font-size:12px;}
+		body { background:#0462A5; font:12px "宋体"; color:#004C7E;}
+		input { border:1px solid #004C7E;}
+		.main { background:url(../images/login/bg.jpg) repeat-x;}
+		.login { background:#DDF1FE; width:468px; height:262px; border:1px solid #000;}
+		.top { background:url(../images/login/login_bg.jpg) repeat-x; width:464px; height:113px; border:1px solid #2376B1; margin-top:1px;}
+		.logo { background:url(../images/login/logo.gif) no-repeat; width:150px; height:42px; float:left; margin:29px 0 0 14px;}
+		.lable { background:url(../images/login/lable.gif) no-repeat; width:157px; height:32px; float:right; margin:81px 31px 0 0;}
+		.submit { background:url(../images/login/submit.gif) no-repeat; cursor:hand; width:71px; height:24px; border:0;} 
+		.reset { background:url(../images/login/reset.gif) no-repeat; cursor:hand; width:71px; height:24px; border:0;} 

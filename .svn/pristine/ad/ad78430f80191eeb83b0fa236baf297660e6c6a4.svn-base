@@ -1,0 +1,82 @@
+dl dt {
+	height: 22px;
+	line-height: 22px;
+	cursor: pointer;
+}
+dt {
+	color: #000;
+	font-size: 12px;
+	font-family: Arial, Helvetica, sans-serif;
+}
+dl dt:hover,dt.pagenumber:hover {
+	color: #F66;
+}
+
+.start {
+    margin-left:10px;
+    margin-bottom:20px;
+	width: 52px;
+	padding-left:20px;
+	height: 20px;
+	line-height: 20px;
+	display: block;
+/* 	background: url(../images/page//first.png) no-repeat; */
+	background: url(../images/page/first.png) no-repeat;
+}
+.first {
+   margin-bottom:20px;
+	margin-left:10px;
+	width: 54px;
+	padding-left:15px;
+	height: 20px;
+	line-height: 20px;
+	display: block;
+	background: url(../images/page//prev.png) no-repeat;
+}
+
+.next {
+    margin-bottom:20px;
+	width: 54px;
+	margin-left:10px;
+	width: 54px;
+	height: 20px;
+	line-height: 20px;
+	display: block;
+	background: url(../images/page//next.png) no-repeat;
+}
+.end {
+    padding-left:10px;
+	margin-bottom:20px;
+	width: 54px;
+	margin-left:10px;
+	width: 54px;
+	height: 20px;
+	line-height: 20px;
+	display: block;
+	background: url(../images/page//last.png) no-repeat;
+}
+.rounded{
+margin-left: 5x;
+padding-left: 5px;
+}
+select {
+	padding: 2px;
+	height: 22px;
+	border: 1px #CCC solid;
+	background: #FFF;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+#pageInfo{
+margin-left: 2x;
+padding-left: 2px;
+}
+#totalNum,#totalPage,#currentPage {
+	color: red;
+	font-weight: bold;
+}
+#totalNumTag,#totalPageTag,#currentPageTag {
+	color: red;
+	font-weight: bold;
+}

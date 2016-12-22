@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mbgo.searchmgr.core.mapper.MgrGoodsTagsMapper" >
+  <resultMap id="BaseResultMap" type="com.mbgo.searchmgr.core.bean.MgrGoodsTags" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="goods_sn" property="goodsSn" jdbcType="VARCHAR" />
+    <result column="tag_word" property="tagWord" jdbcType="VARCHAR" />
+    <result column="is_limited" property="isLimited" jdbcType="INTEGER" />
+     <result column="tag_sort" property="tagSort" jdbcType="INTEGER" />
+    <result column="add_time" property="addTime" jdbcType="TIMESTAMP" />
+    <result column="flag" property="flag" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, goods_sn, tag_word, is_limited, tag_sort,add_time,flag
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.mbgo.searchmgr.core.bean.MgrGoodsTags" >
+    select 
+    <include refid="Base_Column_List" />
+    from mgr_goods_tags
+  </select>
+  <select id="queryTagsToSelect" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from mgr_goods_tags where tag_word LIKE CONCAT(CONCAT('%', #{para}), '%')
+  </select>
+  <select id="queryTags" resultType="String" parameterType="java.lang.String" >
+    select  distinct tag_word from mgr_goods_tags where tag_word LIKE CONCAT(CONCAT('%', #{para}), '%')
+  </select>
+  <select id="queryTagsGroupBy" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select  * from mgr_goods_tags where tag_word LIKE CONCAT(CONCAT('%', #{para}), '%') group by tag_word
+  </select>
+  <select id="selectByOther" resultMap="BaseResultMap" parameterType="com.mbgo.searchmgr.core.bean.MgrGoodsTags" >
+    select 
+    <include refid="Base_Column_List" />
+    from mgr_goods_tags
+  </select>
+  <select id="selectGoodsTagsByword" resultMap="BaseResultMap" parameterType="com.mbgo.searchmgr.core.bean.MgrGoodsTags" >
+    select 
+    <include refid="Base_Column_List" />
+    from mgr_goods_tags where goods_sn like #{goodsSn,jdbcType=VARCHAR} and tag_word like #{tagWord,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from mgr_goods_tags
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteGoodsTagsByword"  parameterType="com.mbgo.searchmgr.core.bean.MgrGoodsTags" >
+    delete from mgr_goods_tags
+    where goods_sn = #{goodsSn,jdbcType=VARCHAR} and tag_word=#{tagWord,jdbcType=VARCHAR}
+  </delete>
+   <delete id="deleteBatchByList" parameterType="list">
+delete from mgr_goods_tags where id in
+  
+  <foreach collection="list" index="index" item="idItem" open="(" separator="," close=")">
+  #{idItem}
+  </foreach>
+  </delete>
+  <insert id="insertSelective" keyProperty="id" useGeneratedKeys="true" parameterType="com.mbgo.searchmgr.core.bean.MgrGoodsTags" >
+    insert into mgr_goods_tags
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="goodsSn != null" >
+        goods_sn,
+      </if>
+      <if test="tagWord != null" >
+        tag_word,
+      </if>
+      <if test="isLimited != null" >
+        is_limited,
+      </if>
+        <if test="tagSort != null" >
+        tag_sort,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="flag != null" >
+        flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="goodsSn != null" >
+        #{goodsSn,jdbcType=VARCHAR},
+      </if>
+      <if test="tagWord != null" >
+        #{tagWord,jdbcType=VARCHAR},
+      </if>
+      <if test="isLimited != null" >
+        #{isLimited,jdbcType=INTEGER},
+      </if>
+      <if test="tagSort != null" >
+         #{tagSort,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="flag != null" >
+        #{flag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.mbgo.searchmgr.core.bean.MgrGoodsTags" >
+    update mgr_goods_tags
+    <set >
+      <if test="goodsSn != null" >
+        goods_sn = #{goodsSn,jdbcType=VARCHAR},
+      </if>
+      <if test="tagWord != null" >
+        tag_word = #{tagWord,jdbcType=VARCHAR},
+      </if>
+      <if test="isLimited != null" >
+        is_limited = #{isLimited,jdbcType=INTEGER},
+      </if>
+       <if test="tagSort != null" >
+        tag_sort = #{tagSort,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+       <if test="flag != null" >
+        flag = #{flag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateToFlag" parameterType="com.mbgo.searchmgr.core.bean.MgrGoodsTags" >
+    update mgr_goods_tags
+     set flag = #{flag,jdbcType=INTEGER}
+    where goods_sn = #{goodsSn,jdbcType=BIGINT}  and tag_word =#{tagWord,jdbcType=VARCHAR}  
+  </update>
+  
+   <update id="updateLimit" parameterType="com.mbgo.searchmgr.core.bean.MgrGoodsTags" >
+    update mgr_goods_tags
+     set is_limited = #{isLimited,jdbcType=INTEGER}
+    where goods_sn = #{goodsSn,jdbcType=BIGINT} and id =#{id,jdbcType=VARCHAR}  
+  </update>
+  
+   <update id="updateLimitOther" parameterType="com.mbgo.searchmgr.core.bean.MgrGoodsTags" >
+    update mgr_goods_tags
+     set is_limited = #{isLimited,jdbcType=INTEGER}
+    where goods_sn = #{goodsSn,jdbcType=BIGINT} 
+  </update>
+  
+   <select id="selectAndPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	select * from mgr_goods_tags  gt where 1=1
+  	<if test="goodsSn1 != null and goodsSn1 != '' ">
+  		and gt.goods_sn LIKE CONCAT(CONCAT('%', #{goodsSn1}), '%')
+  	</if>
+  	<if test="tagWord1 != null and tagWord1 != '' ">
+  		and gt.tag_word LIKE CONCAT(CONCAT('%', #{tagWord1}), '%')
+  	</if>
+  	<if test="beginTime != null and beginTime != ''">
+  	<![CDATA[
+   		and gt.add_time >= #{beginTime} 
+   		]]>
+  	</if>
+    <if test="endTime != null and endTime != ''" >
+  	<![CDATA[
+  	and gt.add_time <= #{endTime} 
+    	]]>  
+  	</if>
+  	order by add_time desc
+  	LIMIT  #{currentPage}, #{pageSize} 
+  </select>
+  
+<!--     <select id="getTotal" parameterType="com.mbgo.searchmgr.core.bean.MgrDicKeyword" resultMap="int"> -->
+<!--   	select count(*) from mgr_dic_keyword  dk where 1=1 -->
+<!--   	<if test="word != null and word != '' "> -->
+<!--   		and dk.word LIKE CONCAT(CONCAT('%', #{word}), '%') -->
+<!--   	</if> -->
+<!--   </select> -->
+  
+   <select id="selectPageTotal" parameterType="java.util.Map" resultType="int">
+  	select count(*) from mgr_goods_tags  gt where 1=1
+  	<if test="goodsSn1 != null and goodsSn1 != '' ">
+  		and gt.goods_sn LIKE CONCAT(CONCAT('%', #{goodsSn1}), '%')
+  	</if>
+  	<if test="tagWord1 != null and tagWord1 != '' ">
+  		and gt.tag_word LIKE CONCAT(CONCAT('%', #{tagWord1}), '%')
+  	</if>
+  	<if test="beginTime != null and beginTime != ''">
+  	<![CDATA[
+   		and gt.add_time >= #{beginTime} 
+   		]]>
+  	</if>
+    <if test="endTime != null and endTime != ''" >
+  	<![CDATA[
+  	and gt.add_time <= #{endTime} 
+    	]]>  
+  	</if>
+  </select>
+  
+<!--      <select id="selectGoodssn" parameterType="java.util.Map" resultType="java.util.Map"> -->
+<!--   	select ti.goods_sn as goodsSn from mgr_goods_tags  ti where length(ti.goods_sn) > 6 group by ti.goods_sn -->
+<!--   	LIMIT  #{currentPage}, #{pageSize}  -->
+<!--   </select> -->
+  
+<!--      <select id="selectGoodssnCount" parameterType="java.util.Map" resultType="java.util.Map"> -->
+<!--   	select ti.goods_sn as goodsSn from mgr_goods_tags  ti where length(ti.goods_sn) > 6 group by ti.goods_sn -->
+<!--   </select> -->
+  
+  
+     <select id="selectGoodssn" parameterType="java.util.Map" resultType="java.util.Map">
+  	 select mt.goods_sn as goodsSn,pl.product_code as productCode from
+ mgr_goods_tags as mt  inner join mbshop.product_store_barcode_list_buff as pl
+ on mt.goods_sn = pl.product_id  where length(mt.goods_sn) > 6 group by mt.goods_sn
+  	LIMIT  #{currentPage}, #{pageSize} 
+  </select>
+  
+     <select id="selectGoodssnCount" parameterType="java.util.Map" resultType="java.util.Map">
+  	 select mt.goods_sn as goodsSn,pl.product_code as productCode from
+ mgr_goods_tags as mt  inner join mbshop.product_store_barcode_list_buff as pl
+ on mt.goods_sn = pl.product_id  where length(mt.goods_sn) > 6 group by mt.goods_sn
+  </select>
+  
+  
+  
+  <update id="updateGoodssn" parameterType="java.util.Map" >
+    update mgr_goods_tags
+    <set >
+      <if test="goodsSn != null" >
+        goods_sn = #{productCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where goods_sn = #{goodsSn,jdbcType=BIGINT}
+  </update>
+  
+   <select id="selectTagUnique" resultMap="BaseResultMap" parameterType="com.mbgo.searchmgr.core.bean.MgrGoodsTags" >
+    select 
+    <include refid="Base_Column_List" />
+    from mgr_goods_tags where goods_sn = #{goodsSn,jdbcType=VARCHAR} and tag_word = #{tagWord,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="getBatchTag" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	select * from mgr_goods_tags  gt where 1=1
+  	<if test="tagWord != null and tagWord != '' ">
+  		and gt.tag_word =#{tagWord,jdbcType=VARCHAR}
+  	</if>
+  </select>
+      <select id="selectAllId" resultType="int">
+    select id from mgr_goods_tags
+  </select>
+  
+  <update id="updateAllSort"  parameterType="java.util.List">
+      
+          <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+                update mgr_goods_tags 
+                <set>
+                  tag_sort=tag_sort+1
+                </set>
+                where id = ${item}
+         </foreach>
+    </update>
+</mapper>

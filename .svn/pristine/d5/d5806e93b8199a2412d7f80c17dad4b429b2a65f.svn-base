@@ -1,0 +1,218 @@
+package com.mbgo.searchmgr.core.controller;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JsonConfig;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSON;
+import com.mbgo.search.core.bean.update.UpdateOption;
+import com.mbgo.search.util.HttpClientUtil;
+import com.mbgo.searchmgr.core.bean.MgrGoodsTags;
+import com.mbgo.searchmgr.core.bean.MgrTagsInfo;
+import com.mbgo.searchmgr.core.service.GoodsTagsService;
+import com.mbgo.searchmgr.core.service.TagsInfoService;
+import com.mbgo.searchmgr.core.util.CommonUtil;
+import com.mbgo.searchmgr.core.util.ConvertUtil;
+import com.mbgo.searchmgr.core.util.JsonDateValueProcessorUtil;
+import com.mbgo.searchmgr.core.util.ResultUtil;
+
+@Controller
+@RequestMapping("/tagsInfo")
+public class TagsInfoController{
+
+	@Autowired
+	private TagsInfoService tagsInfoService;
+	@Autowired
+	private GoodsTagsService goodsTagsService;
+	
+	public final static String PACKAGE = "pages/view/word";
+	
+	  @RequestMapping(value = "/toTagsInfo")
+	    public String toTagsInfo() {
+	        return PACKAGE + "/tagsInfo";
+	    }
+	  
+	  @RequestMapping(value = "/queryTagsInfo")
+//	  @ResponseBody
+	  public void queryTagsInfo(HttpServletRequest request,HttpServletResponse response) {
+		  Map<String, Object> map =null;
+		  int currentPage = Integer.parseInt(request.getParameter("page")==null?"1":request.getParameter("page"));
+		  int pageSize    = Integer.parseInt(request.getParameter("rows")==null?"1":request.getParameter("rows"));		  
+		  String tagWord = request.getParameter("tagWord1") == null?"":request.getParameter("tagWord1");
+		  String beginTime = request.getParameter("beginTime") == null?"":request.getParameter("beginTime");
+		  String endTime = request.getParameter("endTime") == null?"":request.getParameter("endTime");
+		  Long at = ConvertUtil.dateConvert(beginTime);
+		  Long et = ConvertUtil.dateConvert(endTime);
+		  if(currentPage == 0){
+			  currentPage = (currentPage) * pageSize;
+		  }else{
+		   currentPage = (currentPage-1) * pageSize;
+		  }
+		  map= new HashMap<String, Object>();
+		  map.put("tagWord",tagWord);
+		  map.put("beginTime",at);
+		  map.put("endTime",et);
+		  map.put("currentPage", currentPage);
+		  map.put("pageSize", pageSize);
+		  List<MgrTagsInfo> listPage = tagsInfoService.selectAndPage(map);
+		  int total = tagsInfoService.selectPageTotal(map);
+		  JsonConfig jsonConfig = new JsonConfig();
+		  jsonConfig.registerJsonValueProcessor(Date.class,new JsonDateValueProcessorUtil("yyyy-MM-dd hh:mm:ss"));
+		  String json = "{\"total\":"+total+" , \"rows\":"+JSONArray.fromObject(listPage,jsonConfig)+"}";
+		  System.out.println(JSONArray.fromObject(listPage,jsonConfig));
+		  response.setContentType("text/html;charset=utf-8");
+//		  mapTP.put("rows", listPage);
+		  try {
+			response.getWriter().print(json);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	  }
+	  @RequestMapping(value = "/addTagsInfo")
+	  @ResponseBody
+	  public List<ResultUtil> addTagsInfo(HttpServletRequest request) {
+		List<ResultUtil> list = new ArrayList<ResultUtil>();
+		ResultUtil ru = null;
+		MgrTagsInfo tagsInfo = new MgrTagsInfo();
+		try{
+		ru = new ResultUtil();
+		String tagWord = request.getParameter("tagWord");
+		String tagSort =  request.getParameter("tagSort");
+		String tagType =  request.getParameter("tagType");
+		Long at = new Date().getTime();
+		Date ut = new Date();
+		tagsInfo.setTagWord(tagWord);
+		tagsInfo.setTagSort(Integer.parseInt(tagSort));
+		tagsInfo.setTagType(Integer.parseInt(tagType));
+		tagsInfo.setAddTime(at);
+		tagsInfo.setUpdateTime(ut);
+		tagsInfoService.add(tagsInfo);
+		ru.setStatus("提示信息");
+		ru.setMessage("添加成功");
+		list.add(ru);
+		}catch (Exception e) {
+			e.printStackTrace();
+			ru = new ResultUtil();
+			ru.setStatus("提示信息");
+			ru.setMessage("添加失败");
+		}
+		return list;
+	  }
+	  @RequestMapping(value = "/updateTagsInfo")
+	  @ResponseBody
+	  public List<ResultUtil> updateTagsInfo(HttpServletRequest request) {
+		  List<ResultUtil> list = new ArrayList<ResultUtil>();
+		  ResultUtil ru = null;
+		  MgrTagsInfo tagsInfo = new MgrTagsInfo();
+		  try{
+			  ru = new ResultUtil();
+			  String id = request.getParameter("id");
+			  String tagWord = request.getParameter("tagWord");
+			  String tagSort =  request.getParameter("tagSort");
+			  String tagType =  request.getParameter("tagType");
+			  Date ut = new Date();
+			  tagsInfo.setId(Long.parseLong(id));
+			  tagsInfo.setTagWord(tagWord);
+			  tagsInfo.setTagSort(Integer.parseInt(tagSort));
+			  tagsInfo.setTagType(Integer.parseInt(tagType));
+			  tagsInfo.setUpdateTime(ut);
+			  tagsInfoService.updateByPrimaryKeySelective(tagsInfo);
+			  ru.setStatus("提示信息");
+			  ru.setMessage("修改成功");
+			  list.add(ru);
+		  }catch (Exception e) {
+			  e.printStackTrace();
+			  ru = new ResultUtil();
+			  ru.setStatus("提示信息");
+			  ru.setMessage("修改失败");
+		  }
+		  return list;
+	  }
+
+	  @RequestMapping(value = "/deleteTagsInfo")
+	  @ResponseBody
+	  public List<ResultUtil> deleteTagsInfo(HttpServletRequest request) {
+		  String  ids = request.getParameter("ids");
+		  String tagWord = request.getParameter("tagWord");
+		  Map<String,Object> map = new HashMap<String,Object>();
+		  map.put("tagWord", tagWord);
+		  List<MgrGoodsTags> listMgt =  goodsTagsService.getBatchTag(map);
+		  List<UpdateOption> listOption = new ArrayList<UpdateOption>();
+          UpdateOption option = null;
+		  for (MgrGoodsTags mgrGoodsTags : listMgt) {
+			  option = new UpdateOption();
+			  option.setProductId(mgrGoodsTags.getGoodsSn());
+			  option.setType("update");
+			  listOption.add(option);
+			  goodsTagsService.deleteGoodsTags(mgrGoodsTags.getId());
+		  }
+		  String urlupdate = new CommonUtil().loadProperties().getProperty("addProducturl");
+		   List<NameValuePair> updateparams = new ArrayList<NameValuePair>();
+		   updateparams.add(new BasicNameValuePair("list",JSON.toJSONString(listOption)));
+		   HttpClientUtil.post(urlupdate, updateparams);
+		  List<Long>  cids = ConvertUtil.convertLongList(ids);
+		  tagsInfoService.deleteBatchByList(cids);
+		  List<ResultUtil> list = new ArrayList<ResultUtil>();
+		  ResultUtil ru = null;
+		  ru = new ResultUtil();
+		  list.add(ru);
+		  return list;
+	  }
+
+	  
+	  @RequestMapping(value = "/deleteTagsCacle")
+	  @ResponseBody
+	  public List<ResultUtil> deleteTagsCacle(HttpServletRequest request) {
+		  String  ids = request.getParameter("ids");
+		  String tagWord = request.getParameter("tagWord");
+		  Map<String,Object> map = new HashMap<String,Object>();
+		  map.put("tagWord", tagWord);
+		  List<MgrGoodsTags> listMgt =  goodsTagsService.getBatchTag(map);
+		  List<UpdateOption> listOption = new ArrayList<UpdateOption>();
+          UpdateOption option = null;
+		  for (MgrGoodsTags mgrGoodsTags : listMgt) {
+			  option = new UpdateOption();
+			  option.setProductId(mgrGoodsTags.getGoodsSn());
+			  option.setType("update");
+			  listOption.add(option);
+			  goodsTagsService.deleteGoodsTags(mgrGoodsTags.getId());
+		  }
+		  String urlupdate = new CommonUtil().loadProperties().getProperty("addProducturl");
+		   List<NameValuePair> updateparams = new ArrayList<NameValuePair>();
+		   updateparams.add(new BasicNameValuePair("list",JSON.toJSONString(listOption)));
+		   HttpClientUtil.post(urlupdate, updateparams);
+		  List<ResultUtil> list = new ArrayList<ResultUtil>();
+		  ResultUtil ru = null;
+		  ru = new ResultUtil();
+		  list.add(ru);
+		  return list;
+	  }
+
+	public TagsInfoService getTagsInfoService() {
+		return tagsInfoService;
+	}
+
+	public void setTagsInfoService(TagsInfoService tagsInfoService) {
+		this.tagsInfoService = tagsInfoService;
+	}
+
+
+	  
+	  
+}

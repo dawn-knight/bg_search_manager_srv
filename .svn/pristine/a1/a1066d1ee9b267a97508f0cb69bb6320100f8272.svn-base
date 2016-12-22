@@ -1,0 +1,95 @@
+package com.mbgo.searchmgr.core.bean.mbshop;
+
+import java.util.Date;
+
+public class ProductLibAttrKey {
+    private Integer attrKeyId;
+
+    private String attrKeyName;
+
+    private String attrKeyCode;
+
+    private Byte inputType;
+
+    private Byte isRequired;
+
+    private Byte sort;
+
+    private Byte status;
+
+    private Date createTime;
+
+    private Date updateTime;
+
+    public Integer getAttrKeyId() {
+        return attrKeyId;
+    }
+
+    public void setAttrKeyId(Integer attrKeyId) {
+        this.attrKeyId = attrKeyId;
+    }
+
+    public String getAttrKeyName() {
+        return attrKeyName;
+    }
+
+    public void setAttrKeyName(String attrKeyName) {
+        this.attrKeyName = attrKeyName == null ? null : attrKeyName.trim();
+    }
+
+    public String getAttrKeyCode() {
+        return attrKeyCode;
+    }
+
+    public void setAttrKeyCode(String attrKeyCode) {
+        this.attrKeyCode = attrKeyCode == null ? null : attrKeyCode.trim();
+    }
+
+    public Byte getInputType() {
+        return inputType;
+    }
+
+    public void setInputType(Byte inputType) {
+        this.inputType = inputType;
+    }
+
+    public Byte getIsRequired() {
+        return isRequired;
+    }
+
+    public void setIsRequired(Byte isRequired) {
+        this.isRequired = isRequired;
+    }
+
+    public Byte getSort() {
+        return sort;
+    }
+
+    public void setSort(Byte sort) {
+        this.sort = sort;
+    }
+
+    public Byte getStatus() {
+        return status;
+    }
+
+    public void setStatus(Byte status) {
+        this.status = status;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+}

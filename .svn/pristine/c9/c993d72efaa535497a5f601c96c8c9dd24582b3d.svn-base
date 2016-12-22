@@ -1,0 +1,25 @@
+ul {
+ list-style: none;
+}
+#faq {
+ font-size: 12px;
+ width: 350px;
+}
+#faq li {
+ margin:0;
+ padding:0;
+}
+#faq dl {
+ margin: 0;
+ padding:0;
+ display:inline;
+}
+#faq dt {
+ cursor:pointer;
+ border-bottom:1px #ccc dotted;
+}
+#faq dd {
+ display:none;
+ margin:0;
+ background:#E5ECF9;
+}

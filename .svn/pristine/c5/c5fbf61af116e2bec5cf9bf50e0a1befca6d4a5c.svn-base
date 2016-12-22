@@ -1,0 +1,331 @@
+package com.mbgo.searchmgr.core.controller;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.http.NameValuePair;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.mbgo.search.util.HttpClientUtil;
+import com.mbgo.searchmgr.core.bean.MallProperty;
+import com.mbgo.searchmgr.core.bean.MallSiteCategory;
+import com.mbgo.searchmgr.core.bean.mbshop.ProductLibAttrKey;
+import com.mbgo.searchmgr.core.bean.mbstore.StoreMallSiteCategory;
+import com.mbgo.searchmgr.core.mbshopservice.ProductLibAttrKeyService;
+import com.mbgo.searchmgr.core.service.MallPropertyService;
+import com.mbgo.searchmgr.core.service.MallSiteCategoryService;
+import com.mbgo.searchmgr.core.storeservice.StoreMallSiteCategoryService;
+import com.mbgo.searchmgr.core.util.CommonUtil;
+
+@Controller
+@RequestMapping("/cateAttr")
+public class CateAttrController{
+	public final static String PACKAGE = "pages/view/word";
+	@Autowired
+	private MallSiteCategoryService mallSiteCategoryService;
+	@Autowired
+	private MallPropertyService mallPropertyService;
+	@Autowired
+	private ProductLibAttrKeyService attrKeyService;
+	@Autowired
+	private StoreMallSiteCategoryService storeMallSiteCategoryService;
+	  @RequestMapping(value = "/toCateAttrIndex")
+	    public String toCateAttrIndex() {
+	        return PACKAGE + "/cateAttrIndex";
+	    }
+	  
+	  @ResponseBody
+	  @RequestMapping("/parentCates")
+	  public List<MallSiteCategory> parentCates(HttpServletRequest request,HttpServletResponse response){
+		  List<MallSiteCategory> list = new ArrayList<MallSiteCategory>();
+		  int id = Integer.parseInt(request.getParameter("cid")== null? "0":request.getParameter("cid"));
+		  list = mallSiteCategoryService.getListByParentId(id);
+		  return list;
+	  }
+	  @ResponseBody
+	  @RequestMapping("/cateAttrs")
+	  public List<MallProperty> cateAttrs(HttpServletRequest request,HttpServletResponse response){
+		  List<MallProperty> list = new ArrayList<MallProperty>();
+		  int id = Integer.parseInt(request.getParameter("cid"));
+		  list = mallPropertyService.getListByParentId(id);
+		  return list;
+	  }
+	  @RequestMapping("/searchAttr")
+	  @ResponseBody
+	  public String searchAttr(HttpServletRequest request,HttpServletResponse response){
+		  String result = "";
+		  int id = Integer.parseInt(request.getParameter("cid"));
+		  List<MallSiteCategory> list = mallSiteCategoryService.getListByParentId(id);
+		  if(list.size() > 0){
+			  result = "1";
+		  }else{
+			  result ="0";
+		  }
+		  return result;
+	  }
+	  @ResponseBody
+	  @RequestMapping("/getAllAttr")
+	  public List<MallProperty> getAllAttr(HttpServletRequest request,HttpServletResponse response){
+		  List<MallProperty> list = new ArrayList<MallProperty>();
+		  list = mallPropertyService.getAllAttr();
+		  return list;
+	  }
+	  @RequestMapping("/addAttrInfo")
+	  @ResponseBody
+	  public List<String> addAttrInfo(HttpServletRequest request,HttpServletResponse response){
+		  List<String> list = new ArrayList<String>();
+		  try{
+		  int cid = Integer.parseInt(request.getParameter("cid"));
+		  String name = request.getParameter("attrName");
+		  String code = request.getParameter("attrCode");
+		  MallProperty pro = new MallProperty();
+		  pro.setPropertyName(name);
+		  pro.setPropertyCode(code);
+		  pro.setCateId(cid);
+		  pro.setCreateTime(new Date());
+		  pro.setUpdateTime(new Date());
+		  pro.setIsLimit(1);
+		  int count = mallPropertyService.selectByCidCount(pro);
+		  count+=1;
+		  pro.setSort(count+1);
+		  List<MallProperty> proList = mallPropertyService.selectByCid(pro);
+		  if(proList.size()<=0){
+		  mallPropertyService.addAttrInfo(pro);
+		  list.add("success");
+		  }
+		  }catch (Exception e) {
+			  e.printStackTrace();
+		}
+		  return list;
+	  }
+	  @RequestMapping("/updateLimit")
+	  @ResponseBody
+	  public List<String> updateLimit(HttpServletRequest request,HttpServletResponse response){
+		  List<String> list = new ArrayList<String>();
+		  try{
+			  int cid = Integer.parseInt(request.getParameter("cid"));
+			  String name = request.getParameter("attrName");
+			  String code = request.getParameter("attrCode");
+			  MallProperty pro = new MallProperty();
+			  pro.setPropertyName(name);
+			  pro.setPropertyCode(code);
+			  pro.setCateId(cid);
+			  pro.setIsLimit(2);
+			  mallPropertyService.updateLimit(pro);
+		  }catch (Exception e) {
+			  e.printStackTrace();
+		  }
+		  return list;
+	  }
+	  @RequestMapping("/updateLimitShow")
+	  @ResponseBody
+	  public List<String> updateLimitShow(HttpServletRequest request,HttpServletResponse response){
+		  List<String> list = new ArrayList<String>();
+		  try{
+			  int cid = Integer.parseInt(request.getParameter("cid"));
+			  String name = request.getParameter("attrName");
+			  String code = request.getParameter("attrCode");
+			  MallProperty pro = new MallProperty();
+			  pro.setPropertyName(name);
+			  pro.setPropertyCode(code);
+			  pro.setCateId(cid);
+			  pro.setIsLimit(1);
+			  mallPropertyService.updateLimit(pro);
+		  }catch (Exception e) {
+			  e.printStackTrace();
+		  }
+		  return list;
+	  }
+	  @RequestMapping("/deleteAttr")
+	  @ResponseBody
+	  public List<String> deleteAttr(HttpServletRequest request,HttpServletResponse response){
+		  List<String> list = new ArrayList<String>();
+		  try{
+			  int cid = Integer.parseInt(request.getParameter("cid"));
+			  String name = request.getParameter("attrName");
+			  String code = request.getParameter("attrCode");
+			  MallProperty pro = new MallProperty();
+			  pro.setPropertyName(name);
+			  pro.setPropertyCode(code);
+			  pro.setCateId(cid);
+			  mallPropertyService.deleteAttr(pro);
+		  }catch (Exception e) {
+			  e.printStackTrace();
+		  }
+		  return list;
+	  }
+	  @RequestMapping("/liftSort")
+	  @ResponseBody
+	  public List<String> liftSort(HttpServletRequest request,HttpServletResponse response){
+		  List<String> list = new ArrayList<String>();
+		  try{
+			  int cid = Integer.parseInt(request.getParameter("cid"));
+			  String name = request.getParameter("attrName");
+			  String code = request.getParameter("attrCode");
+			  int offset = Integer.parseInt(request.getParameter("offset"));
+			  String prevCode = request.getParameter("prevCode");
+			  String nextCode = request.getParameter("nextCode");
+			  MallProperty pro = new MallProperty();
+			  pro.setPropertyName(name);
+			  pro.setPropertyCode(code);
+			  pro.setCateId(cid);
+			  MallProperty prev = new MallProperty();
+			  prev.setPropertyCode(prevCode);
+			  prev.setCateId(cid);
+			  MallProperty next = new MallProperty();
+			  next.setPropertyCode(nextCode);
+			  next.setCateId(cid);
+			 List<MallProperty> proList = mallPropertyService.selectByCid(pro);
+			 List<MallProperty> prevList = mallPropertyService.selectByCid(prev);
+			 List<MallProperty> nextLis = mallPropertyService.selectByCid(next);
+			 if(offset == 1){
+				 int prevN = prevList.get(0).getSort();
+				 int proN = proList.get(0).getSort();
+				 pro.setSort(prevN);
+				 prev.setSort(proN);
+				 mallPropertyService.updateLimit(pro);
+				 mallPropertyService.updateLimit(prev);
+			 }else{
+				 int nextN = nextLis.get(0).getSort();
+				 int proN = proList.get(0).getSort();
+				 pro.setSort(nextN);
+				 next.setSort(proN); 
+				 mallPropertyService.updateLimit(pro);
+				 mallPropertyService.updateLimit(next);
+			 }
+			
+		  }catch (Exception e) {
+			  e.printStackTrace();
+		  }
+		  return list;
+	  }
+	  
+
+	  
+	  @RequestMapping("/reloadInterfaceCategory")
+	  @ResponseBody
+	  public String reloadInterfaceCategory(HttpServletRequest request,HttpServletResponse response){
+		  String url = new CommonUtil().loadProperties().getProperty("reloadurl");
+		  String result = "";
+		  try{
+		  List<NameValuePair> params = new ArrayList<NameValuePair>();
+		   HttpClientUtil.get(url, params);
+		   result = "加载成功";
+		  }catch (Exception e) {
+			  result = "加载失败";
+			  e.printStackTrace();
+		}
+		  return result;
+	  }
+	  @RequestMapping("/reloadCategory")
+	  @ResponseBody
+	  public List<String> reloadCategory(HttpServletRequest request,HttpServletResponse response){
+		  List<String> result = new ArrayList<String>();
+		  List<ProductLibAttrKey> plist =null;
+		  List<StoreMallSiteCategory> slist =null;
+		  MallSiteCategory msc = null;
+		  MallProperty mp = null;
+		  try{
+			   plist = attrKeyService.getAll();
+			   slist = storeMallSiteCategoryService.getAll();
+			   ProductLibAttrKey [] temp = CommonUtil.getNotDynamic(plist.size());
+			   for (int i = temp.length-1;i>=0;i--) {
+				plist.add(temp[i]);
+			  }
+			   if(null != slist){
+				   for (StoreMallSiteCategory storeMallSiteCategory : slist) {
+					msc = new MallSiteCategory();
+					int id = storeMallSiteCategory.getId();
+					String name = storeMallSiteCategory.getSiteCateName();
+					int parentId = storeMallSiteCategory.getParentId();
+					Date ct = storeMallSiteCategory.getCreateTime();
+					Date ut = storeMallSiteCategory.getUpdateTime();
+					msc.setId(id);
+					msc.setSiteCateName(name);
+					msc.setParentId(parentId);
+					msc.setCreateTime(ct);
+					msc.setUpdateTime(ut);
+                    mallSiteCategoryService.addMallSiteCaategory(msc);
+				}
+			   }
+			   
+		if(null != plist){
+			 int allSort = 0;
+			 for (ProductLibAttrKey attrKey : plist) {
+				 if(!attrKey.getAttrKeyName().equals("")){
+						mp = new MallProperty();
+						String name = attrKey.getAttrKeyName();
+						String code = attrKey.getAttrKeyCode();
+						allSort= allSort+1;
+						Date ct = attrKey.getCreateDate();
+						Date ut = attrKey.getLastUpdateDate();
+						mp.setPropertyName(name);
+						mp.setPropertyCode(code);
+						mp.setSort(allSort);
+						mp.setIsLimit(1);
+						mp.setCreateTime(ct);
+						mp.setUpdateTime(ut);
+						mp.setCateId(0);
+						mallPropertyService.addMallProperty(mp);
+			}
+		}
+		 for (StoreMallSiteCategory storeMallSiteCategory : slist) {
+			 int totalSort = 1;
+				 for (ProductLibAttrKey attrKey : plist) {
+					if(!attrKey.getAttrKeyName().equals("")){
+					mp = new MallProperty();
+					String name = attrKey.getAttrKeyName();
+					String code = attrKey.getAttrKeyCode();
+					totalSort+=1;
+					Date ct = attrKey.getCreateDate();
+					Date ut = attrKey.getLastUpdateDate();
+					mp.setPropertyName(name);
+					mp.setPropertyCode(code);
+					mp.setSort(totalSort);
+					mp.setIsLimit(1);
+					mp.setCreateTime(ct);
+					mp.setUpdateTime(ut);
+					mp.setCateId(storeMallSiteCategory.getId());
+					mallPropertyService.addMallProperty(mp);
+					}
+				}
+			   }
+			   }
+		  }catch (Exception e) {
+			  e.printStackTrace();
+		  }
+		  return result;
+	  }
+	   
+	  @RequestMapping("/queryByPk")
+	  @ResponseBody
+	  public List<MallSiteCategory> queryByPk(HttpServletRequest request,HttpServletResponse response){
+		  List<MallSiteCategory> list = new ArrayList<MallSiteCategory>();
+		  String  idS = request.getParameter("id");
+		  if(null == idS || idS.equals("")){
+			  return list;
+		  }else{
+		  int id = Integer.parseInt(request.getParameter("id"));
+		  getParentId(id,list);
+		  return list;
+		  }
+	  }
+	  
+	  public MallSiteCategory getParentId(int id,List<MallSiteCategory> list){
+		  MallSiteCategory msc = mallSiteCategoryService.selectByPrimaryKey(id);
+		  if(msc.getParentId() != 0){
+			  list.add(msc);
+			  msc =  getParentId(msc.getParentId(),list);
+		  }
+		  return msc;
+		  }
+	  
+}
+

@@ -1,0 +1,126 @@
+package com.mbgo.searchmgr.core.service.impl;
+
+import java.io.BufferedOutputStream;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.google.common.collect.Lists;
+import com.mbgo.searchmgr.core.bean.MgrBaseKeyword;
+import com.mbgo.searchmgr.core.mapper.MgrBaseKeywordMapper;
+import com.mbgo.searchmgr.core.service.BaseKeywordService;
+
+/**
+ * BaseKeywordService接口实现类
+ * @author qining
+ *
+ */
+@Service("baseKeywordService")
+public class BaseKeywordServiceImpl implements BaseKeywordService{
+	
+	@Autowired
+	private MgrBaseKeywordMapper baseKeywordMapper;
+
+
+	/* (non-Javadoc)
+	 * @see com.mbgo.searchmgr.core.service.BaseKeywordService#addBaseKeyword(com.mbgo.searchmgr.core.bean.MgrBaseKeyword)
+	 */
+	@Override
+	public int addBaseKeyword(MgrBaseKeyword baseKeyword) {
+		return baseKeywordMapper.insert(baseKeyword);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.mbgo.searchmgr.core.service.BaseKeywordService#deleteBaseKeyword(java.lang.Long)
+	 */
+	@Override
+	public int deleteBaseKeyword(Long id) {
+		return baseKeywordMapper.deleteByPrimaryKey(id);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.mbgo.searchmgr.core.service.BaseKeywordService#updateBaseKeyword(com.mbgo.searchmgr.core.bean.MgrBaseKeyword)
+	 */
+	@Override
+	public int updateBaseKeyword(MgrBaseKeyword baseKeyword) {
+		return baseKeywordMapper.updateByPrimaryKeySelective(baseKeyword);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.mbgo.searchmgr.core.service.BaseKeywordService#deleteBatchByList(java.util.List)
+	 */
+	@Override
+	public int deleteBatchByList(List<Long> ids) {
+		return baseKeywordMapper.deleteBatchByList(ids);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.mbgo.searchmgr.core.service.BaseKeywordService#selectAndPage(java.util.Map)
+	 */
+	@Override
+	public List<MgrBaseKeyword> selectAndPage(Map<String, Object> map) {
+		return baseKeywordMapper.selectAndPage(map);
+	}
+	public List<MgrBaseKeyword> exportSelect(Map<String, Object> map) {
+		return baseKeywordMapper.exportSelect(map);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.mbgo.searchmgr.core.service.BaseKeywordService#selectPageTotal(java.util.Map)
+	 */
+	@Override
+	public int selectPageTotal(Map<String, Object> map) {
+		return baseKeywordMapper.selectPageTotal(map);
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.mbgo.searchmgr.core.service.BaseKeywordService#selectByCode(java.lang.String)
+	 */
+	public List<MgrBaseKeyword> selectByCode(String code){
+		return baseKeywordMapper.selectByCode(code);
+	}
+	public MgrBaseKeyword selectDataByWordcode(String code){
+		return baseKeywordMapper.selectDataByWordcode(code);
+	}
+
+	private static final String DOWNLOAD_CHARSET = "gb2312";
+	@Override
+	public void downloadBaseWord(HttpServletResponse response,
+			List<MgrBaseKeyword> lits) {
+		BufferedOutputStream bos = null;
+		try{
+			String fileName = "邦购网关键词_" +"_" + System.currentTimeMillis() + ".csv";
+			fileName = URLEncoder.encode(fileName, "GB2312");  
+	        fileName = URLDecoder.decode(fileName, "ISO-8859-1");
+			bos = new BufferedOutputStream(response.getOutputStream());
+			response.setContentType("application/octet-stream "); // MIME
+			response.setHeader("Location", fileName);
+			response.setHeader("Content-disposition", "inline;filename=" + fileName);
+			response.setCharacterEncoding(DOWNLOAD_CHARSET);
+			bos.write("关键字,搜索次数,结果数\n".getBytes(DOWNLOAD_CHARSET));
+			int count = 0;
+			for (MgrBaseKeyword mgrBaseKeyword : lits) {
+					String line = mgrBaseKeyword.getKeyword() + "," + mgrBaseKeyword.getSearchCount() + "," + mgrBaseKeyword.getRscount() + "\n";
+					bos.write(line.getBytes(DOWNLOAD_CHARSET));
+					count ++;
+					if(count > 3000) {
+						bos.flush();
+						count = 0;
+					}
+				}
+			bos.flush();
+			bos.close();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+     
+	}
+	
+
+}

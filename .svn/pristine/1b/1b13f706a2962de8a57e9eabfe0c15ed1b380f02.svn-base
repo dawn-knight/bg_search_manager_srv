@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mbgo.searchmgr.core.mapper.MgrTagsInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.mbgo.searchmgr.core.bean.MgrTagsInfo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="tag_word" property="tagWord" jdbcType="VARCHAR" />
+    <result column="tag_sort" property="tagSort" jdbcType="INTEGER" />
+    <result column="tag_type" property="tagType" jdbcType="INTEGER" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, tag_word, tag_sort, tag_type, add_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from mgr_tags_info
+  </select>
+  <select id="selectByOther" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from mgr_tags_info
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from mgr_tags_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+   <delete id="deleteBatchByList" parameterType="list">
+delete from mgr_tags_info where id in
+  
+  <foreach collection="list" index="index" item="idItem" open="(" separator="," close=")">
+  #{idItem}
+  </foreach>
+  </delete>
+  <insert id="insertSelective" keyProperty="id" useGeneratedKeys="true" parameterType="com.mbgo.searchmgr.core.bean.MgrTagsInfo" >
+    insert into mgr_tags_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tagWord != null" >
+        tag_word,
+      </if>
+      <if test="tagSort != null" >
+        tag_sort,
+      </if>
+      <if test="tagType != null" >
+        tag_type,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tagWord != null" >
+        #{tagWord,jdbcType=VARCHAR},
+      </if>
+      <if test="tagSort != null" >
+        #{tagSort,jdbcType=INTEGER},
+      </if>
+      <if test="tagType != null" >
+        #{tagType,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mbgo.searchmgr.core.bean.MgrTagsInfo" >
+    update mgr_tags_info
+    <set >
+      <if test="tagWord != null" >
+        tag_word = #{tagWord,jdbcType=VARCHAR},
+      </if>
+      <if test="tagSort != null" >
+        tag_sort = #{tagSort,jdbcType=INTEGER},
+      </if>
+      <if test="tagType != null" >
+        tag_type = #{tagType,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+   <select id="selectAndPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	select * from mgr_tags_info  ti where 1=1
+  	<if test="tagWord != null and tagWord != '' ">
+  		and ti.tag_word LIKE CONCAT(CONCAT('%', #{tagWord}), '%')
+  	</if>
+  	<if test="beginTime != null and beginTime != ''">
+  	<![CDATA[
+   		and ti.add_time >= #{beginTime} 
+   		]]>
+  	</if>
+    <if test="endTime != null and endTime != ''" >
+  	<![CDATA[
+  	and ti.add_time <= #{endTime} 
+    	]]>  
+  	</if>
+  	order by add_time desc
+  	LIMIT  #{currentPage}, #{pageSize} 
+  </select>
+  
+<!--     <select id="getTotal" parameterType="com.mbgo.searchmgr.core.bean.MgrDicKeyword" resultMap="int"> -->
+<!--   	select count(*) from mgr_dic_keyword  dk where 1=1 -->
+<!--   	<if test="word != null and word != '' "> -->
+<!--   		and dk.word LIKE CONCAT(CONCAT('%', #{word}), '%') -->
+<!--   	</if> -->
+<!--   </select> -->
+  
+   <select id="selectPageTotal" parameterType="java.util.Map" resultType="int">
+  		select count(*) from mgr_tags_info  ti where 1=1
+  	<if test="tagWord != null and tagWord != '' ">
+  		and ti.tag_word LIKE CONCAT(CONCAT('%', #{tagWord}), '%')
+  	</if>
+  	<if test="beginTime != null and beginTime != ''">
+  	<![CDATA[
+   		and ti.add_time >= #{beginTime} 
+   		]]>
+  	</if>
+    <if test="endTime != null and endTime != ''" >
+  	<![CDATA[
+  	and ti.add_time <= #{endTime} 
+    	]]>  
+  	</if>
+  </select>
+  
+
+  <select id="queryTags" resultType="String" parameterType="java.lang.String" >
+    select  distinct tag_word from mgr_tags_info where tag_word LIKE CONCAT(CONCAT('%', #{para}), '%')
+  </select>
+  
+    <select id="queryTagsGroupBy" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select  * from mgr_tags_info where tag_word LIKE CONCAT(CONCAT('%', #{para}), '%') group by tag_word
+  </select>
+  
+</mapper>
